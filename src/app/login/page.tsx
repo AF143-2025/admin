@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Lock,
@@ -8,14 +8,12 @@ import {
   AlertCircle,
   CheckCircle2,
   Store,
-  Server,
-  Globe,
-  Settings,
-  RefreshCw,
-  ChevronDown,
-  ChevronUp,
+  ShieldCheck,
+  Crown,
+  ArrowLeft,
+  Sparkles,
 } from "lucide-react";
-import { setAdminToken, getApiBaseUrl, setCustomApiUrl } from "@/lib/api";
+import { setAdminToken, getApiBaseUrl } from "@/lib/api";
 
 function LoginForm() {
   const router = useRouter();
@@ -27,61 +25,10 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(
     unauthorizedParam
-      ? "تنبيه: يتطلب الوصول إلى لوحة الإدارة تسجيل الدخول بحساب مدير معتمد أولاً."
+      ? "تنبيه: يتطلب الوصول إلى لوحة الإدارة تسجيل الدخول بحساب المدير إبراهيم أولاً."
       : null
   );
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  // Server URL settings
-  const [apiUrl, setApiUrl] = useState("");
-  const [showServerSettings, setShowServerSettings] = useState(false);
-  const [testingConnection, setTestingConnection] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<"idle" | "success" | "error">("idle");
-  const [connectionMessage, setConnectionMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    setApiUrl(getApiBaseUrl());
-  }, []);
-
-  const handleSaveApiUrl = (newUrl: string) => {
-    setApiUrl(newUrl);
-    setCustomApiUrl(newUrl);
-    setConnectionStatus("idle");
-    setConnectionMessage(null);
-  };
-
-  const handleTestConnection = async () => {
-    const targetUrl = apiUrl.trim() || getApiBaseUrl();
-    const cleanBase = targetUrl ? targetUrl.replace(/\/$/, "") : "";
-    const testEndpoint = `${cleanBase}/api/products`;
-    setTestingConnection(true);
-    setConnectionStatus("idle");
-    setConnectionMessage(null);
-
-    try {
-      // Ping products or health endpoint
-      const res = await fetch(testEndpoint, {
-        method: "GET",
-        headers: { Accept: "application/json" },
-      });
-
-      if (res.ok || res.status === 200) {
-        setConnectionStatus("success");
-        setConnectionMessage("تم الاتصال بسيرفر المتجر بنجاح! السيرفر يعمل بشكل ممتاز.");
-      } else {
-        // Even if 401 or 404, server responded!
-        setConnectionStatus("success");
-        setConnectionMessage(`تم الوصول إلى السيرفر (كود الاستجابة: ${res.status}). السيرفر يعمل.`);
-      }
-    } catch (err: any) {
-      setConnectionStatus("error");
-      setConnectionMessage(
-        `تعذر الاتصال بالسيرفر (${targetUrl || "المتجر الافتراضي"}). تأكد من أن السيرفر يعمل وأن الرابط صحيح.`
-      );
-    } finally {
-      setTestingConnection(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,7 +40,7 @@ function LoginForm() {
       return;
     }
 
-    const currentBaseUrl = apiUrl.trim() || getApiBaseUrl();
+    const currentBaseUrl = getApiBaseUrl();
     const cleanBase = currentBaseUrl ? currentBaseUrl.replace(/\/$/, "") : "";
     const loginEndpoint = `${cleanBase}/api/admin/auth/login`;
 
@@ -108,7 +55,7 @@ function LoginForm() {
       const data = await res.json();
       if (data.success && data.token) {
         setAdminToken(data.token);
-        setSuccessMessage(data.message || "تم تسجيل دخول المدير بنجاح!");
+        setSuccessMessage(data.message || "مرحباً بك يا إبراهيم، تم تسجيل الدخول بنجاح!");
         setTimeout(() => {
           router.push("/");
         }, 500);
@@ -116,10 +63,7 @@ function LoginForm() {
         setErrorMessage(data.error || "فشل تسجيل الدخول: البريد أو كلمة المرور غير صحيحة");
       }
     } catch (err) {
-      setShowServerSettings(true);
-      setErrorMessage(
-        `تعذر الاتصال بخادم المتجر على (${currentBaseUrl}). يرجى التحقق من إعدادات "رابط السيرفر" أدناه والتأكد من تشغيل خادم المتجر.`
-      );
+      setErrorMessage("تعذر الاتصال بخادم المتجر. يرجى التأكد من تشغيل السيرفر والمحاولة مجدداً.");
     } finally {
       setLoading(false);
     }
@@ -132,44 +76,73 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-white flex flex-col justify-between p-4 sm:p-6 select-none" dir="rtl">
+    <div
+      className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-white flex flex-col justify-between p-4 sm:p-6 lg:p-8 relative overflow-hidden select-none"
+      dir="rtl"
+    >
+      {/* Ambient background glow */}
+      <div className="absolute top-1/4 -right-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 -left-20 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+
       {/* Top Bar */}
-      <div className="max-w-6xl w-full mx-auto flex items-center justify-between py-2">
-        <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
-          <Store className="w-4 h-4 text-emerald-400" />
-          <span>لوحة تحكم مدير متجر سما الخضراء</span>
+      <header className="max-w-6xl w-full mx-auto flex items-center justify-between py-2 relative z-10">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 p-1.5 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+            <Store className="w-4 h-4 text-slate-950 font-black" />
+          </div>
+          <div>
+            <div className="text-xs sm:text-sm font-black tracking-tight text-white flex items-center gap-1.5">
+              <span>متجر سما الخضراء</span>
+              <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                لوحة الإدارة
+              </span>
+            </div>
+          </div>
         </div>
-        <span className="text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/30">
-          STANDALONE ADMIN PORTAL v2.0
-        </span>
-      </div>
+
+        <div className="flex items-center gap-2">
+          <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold text-slate-400 bg-white/5 px-3 py-1 rounded-full border border-white/10">
+            <Crown className="w-3.5 h-3.5 text-amber-400" />
+            <span>المدير: إبراهيم</span>
+          </span>
+          <span className="text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/30">
+            PRO SUITE v2.0
+          </span>
+        </div>
+      </header>
 
       {/* Main Login Card */}
-      <div className="max-w-md w-full mx-auto my-auto py-8">
-        <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl space-y-6">
+      <main className="max-w-md w-full mx-auto my-auto py-8 relative z-10">
+        <div className="bg-slate-900/80 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl shadow-black/50 space-y-6 hover:border-emerald-500/30 transition-all duration-500">
           {/* Header */}
-          <div className="text-center space-y-2">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 p-2 flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/25 border border-white/20">
-              <Store className="w-8 h-8 text-white" />
+          <div className="text-center space-y-3">
+            <div className="relative inline-block">
+              <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-emerald-400 p-0.5 shadow-2xl shadow-emerald-500/30">
+                <div className="w-full h-full bg-slate-950 rounded-[22px] flex items-center justify-center">
+                  <ShieldCheck className="w-9 h-9 text-emerald-400" />
+                </div>
+              </div>
+              <div className="absolute -top-1.5 -right-1.5 w-7 h-7 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center backdrop-blur-md">
+                <Crown className="w-3.5 h-3.5 text-amber-400" />
+              </div>
             </div>
 
             <div>
-              <h1 className="text-2xl font-black tracking-tight text-white">
-                بوابة دخول المدير العام
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center justify-center gap-2">
+                <span>بوابة دخول المدير</span>
+                <span className="text-emerald-400">إبراهيم</span>
               </h1>
-              <p className="text-xs text-slate-300 mt-1">
-                لوحة التحكم الإدارية المستقلة لمتجر سما الخضراء
+              <p className="text-xs text-slate-400 mt-1.5 font-medium">
+                لوحة التحكم الإدارية الاحترافية لمتجر سما الخضراء
               </p>
             </div>
           </div>
 
           {/* Error Message Alert */}
           {errorMessage && (
-            <div className="p-3.5 bg-red-500/15 border border-red-500/30 rounded-2xl text-xs text-red-200 flex items-start gap-2.5 animate-in fade-in">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
-              <div className="space-y-1 leading-relaxed">
-                <div>{errorMessage}</div>
-              </div>
+            <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-xs text-rose-200 flex items-start gap-2.5 animate-in fade-in">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
+              <div className="leading-relaxed">{errorMessage}</div>
             </div>
           )}
 
@@ -177,7 +150,7 @@ function LoginForm() {
           {successMessage && (
             <div className="p-3.5 bg-emerald-500/15 border border-emerald-500/30 rounded-2xl text-xs text-emerald-200 flex items-center gap-2.5 animate-in fade-in">
               <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
-              <span>{successMessage}</span>
+              <span className="font-bold">{successMessage}</span>
             </div>
           )}
 
@@ -194,9 +167,9 @@ function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@store.com"
-                  className="w-full pl-3 pr-10 py-3 rounded-2xl bg-white/10 border border-white/15 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-xs sm:text-sm text-white placeholder-slate-400 transition-all font-mono"
+                  className="w-full pl-3 pr-11 py-3.5 rounded-2xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-xs sm:text-sm text-white placeholder-slate-500 transition-all font-mono"
                 />
-                <Mail className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5" />
+                <Mail className="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             </div>
 
@@ -211,106 +184,63 @@ function LoginForm() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-3 pr-10 py-3 rounded-2xl bg-white/10 border border-white/15 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-xs sm:text-sm text-white placeholder-slate-400 transition-all font-mono"
+                  className="w-full pl-3 pr-11 py-3.5 rounded-2xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-xs sm:text-sm text-white placeholder-slate-500 transition-all font-mono"
                 />
-                <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5" />
+                <Lock className="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-black text-sm shadow-xl shadow-emerald-500/25 transition-all active:scale-98 flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black text-sm shadow-xl shadow-emerald-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
             >
-              {loading ? "جاري التحقق والاتصال..." : "تسجيل الدخول إلى اللوحة"}
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                  <span>جاري التحقق وتسجيل الدخول...</span>
+                </>
+              ) : (
+                <>
+                  <span>دخول لوحة التحكم</span>
+                  <ArrowLeft className="w-4 h-4" />
+                </>
+              )}
             </button>
           </form>
 
           {/* Quick Demo Credentials */}
-          <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[11px]">
+          <div className="pt-3 border-t border-white/10 text-center">
             <button
               type="button"
               onClick={fillQuickAdmin}
-              className="text-emerald-400 hover:text-emerald-300 underline font-bold"
+              className="text-xs text-emerald-400 hover:text-emerald-300 font-bold inline-flex items-center gap-1.5 py-1 px-3 rounded-xl hover:bg-emerald-500/10 transition-colors"
             >
-              تعبئة بيانات المدير الافتراضية
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setShowServerSettings(!showServerSettings)}
-              className="text-slate-400 hover:text-white flex items-center gap-1 font-medium transition-colors"
-            >
-              <Server className="w-3.5 h-3.5 text-emerald-400" />
-              <span>إعداد رابط السيرفر</span>
-              {showServerSettings ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>تعبئة بيانات المدير إبراهيم تلقائياً</span>
             </button>
           </div>
-
-          {/* Collapsible Server Settings */}
-          {showServerSettings && (
-            <div className="p-4 bg-black/40 rounded-2xl border border-white/10 space-y-3 text-xs animate-in fade-in">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-300 flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5 text-emerald-400" />
-                  رابط خادم المتجر (Backend URL)
-                </span>
-              </div>
-
-              <p className="text-[11px] text-slate-400 leading-relaxed">
-                ضع هنا رابط موقع متجرك الرئيسي (مثال: <code className="text-emerald-300 bg-white/5 px-1 py-0.5 rounded">https://app-xxxx.vercel.app</code>) لتقوم لوحة الإدارة بالتواصل معه.
-              </p>
-
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={apiUrl}
-                  onChange={(e) => handleSaveApiUrl(e.target.value)}
-                  placeholder="https://your-store.vercel.app"
-                  className="flex-1 px-3 py-2 rounded-xl bg-white/10 border border-white/15 focus:outline-none focus:ring-1 focus:ring-emerald-400 text-xs font-mono text-white placeholder-slate-500"
-                />
-                <button
-                  type="button"
-                  onClick={handleTestConnection}
-                  disabled={testingConnection}
-                  className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs flex items-center gap-1 shrink-0 disabled:opacity-50 transition-colors"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 ${testingConnection ? "animate-spin" : ""}`} />
-                  <span>فحص</span>
-                </button>
-              </div>
-
-              {connectionMessage && (
-                <div
-                  className={`p-2.5 rounded-xl text-[11px] flex items-start gap-2 ${
-                    connectionStatus === "success"
-                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                      : "bg-red-500/20 text-red-300 border border-red-500/30"
-                  }`}
-                >
-                  {connectionStatus === "success" ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-emerald-400" />
-                  ) : (
-                    <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-400" />
-                  )}
-                  <span>{connectionMessage}</span>
-                </div>
-              )}
-            </div>
-          )}
         </div>
-      </div>
+      </main>
 
-      <div className="text-center text-[10px] text-slate-500 py-2">
-        شركة سما الخضراء للهواتف الذكية • نظام الإدارة المستقل 2026
-      </div>
+      {/* Footer */}
+      <footer className="max-w-6xl w-full mx-auto text-center text-[11px] text-slate-500 py-2 relative z-10 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <span>شركة سما الخضراء للهواتف الذكية والصيانة • 2026</span>
+        <span className="font-mono text-[10px] text-slate-600">Secure Admin Session • RSA-256</span>
+      </footer>
     </div>
   );
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-white text-xs">جاري التحميل...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white text-xs">
+          جاري التحميل...
+        </div>
+      }
+    >
       <LoginForm />
     </Suspense>
   );

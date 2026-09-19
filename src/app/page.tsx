@@ -59,7 +59,11 @@ export default function StandaloneAdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Admin Info
-  const [adminUser, setAdminUser] = useState<any | null>(null);
+  const [adminUser, setAdminUser] = useState<any | null>({
+    name: "إبراهيم",
+    email: "admin@store.com",
+    role: "ADMIN",
+  });
 
   // Stats State
   const [stats, setStats] = useState({
@@ -205,7 +209,10 @@ export default function StandaloneAdminDashboard() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.user) {
-          setAdminUser(data.user);
+          setAdminUser({
+            ...data.user,
+            name: "إبراهيم",
+          });
         }
       })
       .catch(() => {});
@@ -772,10 +779,10 @@ export default function StandaloneAdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col antialiased selection:bg-emerald-500 selection:text-white" dir="rtl">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col antialiased selection:bg-emerald-500 selection:text-white" dir="rtl">
       {/* Toast Notification */}
       {toast.show && (
-        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-5 duration-300 pointer-events-none">
+        <div className="fixed bottom-20 lg:bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-5 duration-300 pointer-events-none">
           <div
             className={`px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-black border backdrop-blur-md ${
               toast.type === "success"
@@ -794,30 +801,31 @@ export default function StandaloneAdminDashboard() {
       )}
 
       {/* Top Navbar */}
-      <header className="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 sm:px-6 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-30 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/80 px-4 sm:px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 lg:hidden"
+            className="p-2 rounded-xl bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-800 lg:hidden"
             aria-label="القائمة"
           >
             <Menu className="w-5 h-5" />
           </button>
 
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 p-2 flex items-center justify-center shadow-lg shadow-emerald-900/30">
-              <Store className="w-5 h-5 text-white" />
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 p-2 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+              <Store className="w-5 h-5 text-slate-950 font-black" />
             </div>
             <div>
               <div className="text-sm font-black tracking-tight text-white flex items-center gap-1.5">
                 <span>سما الخضراء</span>
-                <span className="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-1.5 py-0.5 rounded-md border border-emerald-500/30">
-                  لوحة المدير المستقلة
+                <span className="text-[10px] bg-emerald-500/15 text-emerald-400 font-bold px-2 py-0.5 rounded-full border border-emerald-500/20">
+                  لوحة الإدارة
                 </span>
               </div>
-              <div className="text-[10px] text-slate-400 font-mono truncate max-w-[200px] sm:max-w-none">
-                متصل بـ: {API_BASE_URL}
+              <div className="text-[11px] text-slate-400 flex items-center gap-1 font-medium">
+                <span>مرحباً،</span>
+                <span className="text-emerald-400 font-black">إبراهيم 👑</span>
               </div>
             </div>
           </div>
@@ -826,20 +834,20 @@ export default function StandaloneAdminDashboard() {
         {/* Right Header Actions */}
         <div className="flex items-center gap-2 sm:gap-3">
           <a
-            href={API_BASE_URL}
+            href="https://app55.vercel.app"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold transition-colors border border-slate-700"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-bold transition-colors border border-slate-800"
           >
             <Store className="w-3.5 h-3.5 text-emerald-400" />
             <span className="hidden sm:inline">معاينة المتجر</span>
-            <ExternalLink className="w-3 h-3 text-slate-400" />
+            <ExternalLink className="w-3 h-3 text-slate-500" />
           </a>
 
           <button
             type="button"
             onClick={handleLogout}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-bold transition-colors border border-rose-500/30"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-bold transition-colors border border-rose-500/20"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">خروج</span>
@@ -851,8 +859,8 @@ export default function StandaloneAdminDashboard() {
       <div className="flex-1 flex w-full max-w-7xl mx-auto">
         {/* Sidebar Navigation */}
         <aside
-          className={`fixed inset-y-0 right-0 z-40 w-64 bg-slate-900 border-l border-slate-800 p-4 space-y-6 flex flex-col justify-between transition-transform duration-300 lg:static lg:translate-x-0 ${
-            sidebarOpen ? "translate-x-0 shadow-2xl" : "translate-x-full lg:translate-x-0"
+          className={`fixed inset-y-0 right-0 z-40 w-64 bg-slate-950 border-l border-slate-800/80 p-4 space-y-6 flex flex-col justify-between transition-transform duration-300 lg:static lg:translate-x-0 ${
+            sidebarOpen ? "translate-x-0 shadow-2xl shadow-black" : "translate-x-full lg:translate-x-0"
           }`}
         >
           <div className="space-y-6">
@@ -889,8 +897,8 @@ export default function StandaloneAdminDashboard() {
                     }}
                     className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-black transition-all ${
                       isActive
-                        ? "bg-emerald-600 text-white shadow-lg shadow-emerald-900/40"
-                        : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/70"
+                        ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-950"
+                        : "text-slate-400 hover:text-slate-100 hover:bg-slate-900"
                     }`}
                   >
                     <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-white" : "text-slate-400"}`} />
@@ -901,13 +909,20 @@ export default function StandaloneAdminDashboard() {
             </nav>
           </div>
 
-          <div className="p-3 rounded-2xl bg-slate-800/60 border border-slate-800 space-y-1 text-center">
-            <div className="text-[11px] font-black text-slate-200">
-              {adminUser?.name || "المدير العام"}
+          <div className="p-3.5 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-900/60 border border-slate-800 space-y-1.5 text-center">
+            <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-black mx-auto text-sm">
+              إ
+            </div>
+            <div className="text-xs font-black text-white flex items-center justify-center gap-1">
+              <span>إبراهيم</span>
+              <span className="text-[10px] text-amber-400">👑</span>
             </div>
             <div className="text-[10px] text-slate-400 font-mono truncate">
               {adminUser?.email || "admin@store.com"}
             </div>
+            <span className="text-[9px] font-bold bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-md border border-emerald-500/20 inline-block">
+              المدير العام
+            </span>
           </div>
         </aside>
 
@@ -919,7 +934,7 @@ export default function StandaloneAdminDashboard() {
         )}
 
         {/* Content Area */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 overflow-x-hidden">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 overflow-x-hidden pb-28 lg:pb-8">
           {/* ==================================================== */}
           {/* 1. OVERVIEW / DASHBOARD TAB */}
           {/* ==================================================== */}
@@ -1219,147 +1234,250 @@ export default function StandaloneAdminDashboard() {
                     <div className="text-xs text-slate-500">جرب تغيير كلمات البحث أو مسح الفلاتر</div>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-right text-xs">
-                      <thead>
-                        <tr className="border-b border-slate-700 text-slate-400 font-bold">
-                          <th className="py-3 px-3">المنتج</th>
-                          <th className="py-3 px-3">القسم</th>
-                          <th className="py-3 px-3">السعر الحالي</th>
-                          <th className="py-3 px-3">السعر السابق</th>
-                          <th className="py-3 px-3">المخزون</th>
-                          <th className="py-3 px-3">حالة التوفر</th>
-                          <th className="py-3 px-3 text-center">الظهور في المتجر</th>
-                          <th className="py-3 px-3 text-center">الإجراءات</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-700/60">
-                        {products.map((p) => {
-                          return (
-                            <tr key={p.id} className="hover:bg-slate-700/30 transition-colors">
-                              <td className="py-3 px-3">
-                                <div className="flex items-center gap-3">
-                                  <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 shrink-0 relative">
-                                    <img
-                                      src={p.imageUrl}
-                                      alt={p.name}
-                                      className="w-full h-full object-cover"
-                                      onError={(e) => {
-                                        (e.target as HTMLImageElement).src =
-                                          "https://images.unsplash.com/photo-1511707171634-5f897ff02560?w=200";
-                                      }}
-                                    />
-                                  </div>
-                                  <div className="max-w-[220px]">
-                                    <div className="font-black text-white truncate" title={p.name}>
-                                      {p.name}
-                                    </div>
-                                    <div className="text-[10px] text-slate-400 font-mono">
-                                      ID: {p.id}
-                                    </div>
-                                  </div>
-                                </div>
-                              </td>
-
-                              <td className="py-3 px-3 text-slate-300 font-medium">
+                  <>
+                    {/* Mobile View: Responsive Product Cards */}
+                    <div className="md:hidden space-y-3">
+                      {products.map((p) => (
+                        <div
+                          key={p.id}
+                          className="p-3.5 rounded-2xl bg-slate-800/60 border border-slate-700/60 space-y-3"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 shrink-0 relative">
+                              <img
+                                src={p.imageUrl}
+                                alt={p.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src =
+                                    "https://images.unsplash.com/photo-1511707171634-5f897ff02560?w=200";
+                                }}
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-black text-sm text-white truncate" title={p.name}>
+                                {p.name}
+                              </div>
+                              <div className="text-[11px] text-slate-400 font-medium">
                                 {p.categoryRel?.name || "بدون قسم"}
-                              </td>
-
-                              <td className="py-3 px-3 font-mono font-black text-emerald-300">
-                                {formatIQD(p.price)}
-                              </td>
-
-                              <td className="py-3 px-3 font-mono text-slate-400">
-                                {p.originalPrice ? (
-                                  <span className="line-through text-rose-400/80">
+                              </div>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="font-mono font-black text-emerald-400 text-xs">
+                                  {formatIQD(p.price)}
+                                </span>
+                                {p.originalPrice && (
+                                  <span className="line-through text-rose-400/80 text-[10px] font-mono">
                                     {formatIQD(p.originalPrice)}
                                   </span>
-                                ) : (
-                                  "—"
                                 )}
-                              </td>
+                              </div>
+                            </div>
+                          </div>
 
-                              <td className="py-3 px-3 font-mono font-bold">
-                                <span
-                                  className={`px-2 py-0.5 rounded-md ${
-                                    p.stock === 0
-                                      ? "bg-rose-500/20 text-rose-300"
-                                      : p.stock <= 5
-                                      ? "bg-amber-500/20 text-amber-300"
-                                      : "text-slate-200"
-                                  }`}
-                                >
-                                  {p.stock}
-                                </span>
-                              </td>
-
-                              <td className="py-3 px-3">
-                                <span
-                                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                    p.availabilityStatus === "AVAILABLE"
-                                      ? "bg-emerald-950 text-emerald-300 border border-emerald-500/30"
-                                      : p.availabilityStatus === "LIMITED"
-                                      ? "bg-amber-950 text-amber-300 border border-amber-500/30"
-                                      : p.availabilityStatus === "OUT_OF_STOCK"
-                                      ? "bg-rose-950 text-rose-300 border border-rose-500/30"
-                                      : "bg-blue-950 text-blue-300 border border-blue-500/30"
-                                  }`}
-                                >
-                                  {p.availabilityStatus === "AVAILABLE"
-                                    ? "متوفر"
+                          <div className="flex items-center justify-between pt-2.5 border-t border-slate-700/60 text-xs">
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                  p.availabilityStatus === "AVAILABLE"
+                                    ? "bg-emerald-950 text-emerald-300 border border-emerald-500/30"
                                     : p.availabilityStatus === "LIMITED"
-                                    ? "كمية محدودة"
+                                    ? "bg-amber-950 text-amber-300 border border-amber-500/30"
                                     : p.availabilityStatus === "OUT_OF_STOCK"
-                                    ? "غير متوفر"
-                                    : "سيتوفر قريبًا"}
-                                </span>
-                              </td>
+                                    ? "bg-rose-950 text-rose-300 border border-rose-500/30"
+                                    : "bg-blue-950 text-blue-300 border border-blue-500/30"
+                                }`}
+                              >
+                                {p.availabilityStatus === "AVAILABLE"
+                                  ? "متوفر"
+                                  : p.availabilityStatus === "LIMITED"
+                                  ? "محدود"
+                                  : p.availabilityStatus === "OUT_OF_STOCK"
+                                  ? "نفد"
+                                  : "قريباً"}
+                              </span>
+                              <span className="text-[11px] font-mono text-slate-400">
+                                المخزون: <b className="text-white">{p.stock}</b>
+                              </span>
+                            </div>
 
-                              <td className="py-3 px-3 text-center">
-                                <button
-                                  type="button"
-                                  onClick={() => handleToggleProductActive(p)}
-                                  className={`p-1 rounded-full transition-colors ${
-                                    p.isActive
-                                      ? "text-emerald-400 hover:text-emerald-300"
-                                      : "text-slate-600 hover:text-slate-400"
-                                  }`}
-                                  title={p.isActive ? "مفعل في المتجر (اضغط للإيقاف)" : "معطل (اضغط للتفعيل)"}
-                                >
-                                  {p.isActive ? (
-                                    <CheckCircle2 className="w-5 h-5 fill-emerald-500/20" />
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => handleToggleProductActive(p)}
+                                className={`p-2 rounded-xl border transition-colors ${
+                                  p.isActive
+                                    ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                                    : "bg-slate-800 text-slate-500 border-slate-700"
+                                }`}
+                                title={p.isActive ? "تعطيل في المتجر" : "تفعيل في المتجر"}
+                              >
+                                {p.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => openEditProduct(p)}
+                                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
+                                title="تعديل"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteProduct(p)}
+                                className="p-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/30 transition-colors"
+                                title="حذف"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Desktop View: Table */}
+                    <div className="hidden md:block overflow-x-auto">
+                      <table className="w-full text-right text-xs">
+                        <thead>
+                          <tr className="border-b border-slate-700 text-slate-400 font-bold">
+                            <th className="py-3 px-3">المنتج</th>
+                            <th className="py-3 px-3">القسم</th>
+                            <th className="py-3 px-3">السعر الحالي</th>
+                            <th className="py-3 px-3">السعر السابق</th>
+                            <th className="py-3 px-3">المخزون</th>
+                            <th className="py-3 px-3">حالة التوفر</th>
+                            <th className="py-3 px-3 text-center">الظهور في المتجر</th>
+                            <th className="py-3 px-3 text-center">الإجراءات</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-700/60">
+                          {products.map((p) => {
+                            return (
+                              <tr key={p.id} className="hover:bg-slate-700/30 transition-colors">
+                                <td className="py-3 px-3">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 shrink-0 relative">
+                                      <img
+                                        src={p.imageUrl}
+                                        alt={p.name}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                          (e.target as HTMLImageElement).src =
+                                            "https://images.unsplash.com/photo-1511707171634-5f897ff02560?w=200";
+                                        }}
+                                      />
+                                    </div>
+                                    <div className="max-w-[220px]">
+                                      <div className="font-black text-white truncate" title={p.name}>
+                                        {p.name}
+                                      </div>
+                                      <div className="text-[10px] text-slate-400 font-mono">
+                                        ID: {p.id}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+
+                                <td className="py-3 px-3 text-slate-300 font-medium">
+                                  {p.categoryRel?.name || "بدون قسم"}
+                                </td>
+
+                                <td className="py-3 px-3 font-mono font-black text-emerald-300">
+                                  {formatIQD(p.price)}
+                                </td>
+
+                                <td className="py-3 px-3 font-mono text-slate-400">
+                                  {p.originalPrice ? (
+                                    <span className="line-through text-rose-400/80">
+                                      {formatIQD(p.originalPrice)}
+                                    </span>
                                   ) : (
-                                    <XCircle className="w-5 h-5 fill-slate-800" />
+                                    "—"
                                   )}
-                                </button>
-                              </td>
+                                </td>
 
-                              <td className="py-3 px-3 text-center">
-                                <div className="flex items-center justify-center gap-1.5">
+                                <td className="py-3 px-3 font-mono font-bold">
+                                  <span
+                                    className={`px-2 py-0.5 rounded-md ${
+                                      p.stock === 0
+                                        ? "bg-rose-500/20 text-rose-300"
+                                        : p.stock <= 5
+                                        ? "bg-amber-500/20 text-amber-300"
+                                        : "text-slate-200"
+                                    }`}
+                                  >
+                                    {p.stock}
+                                  </span>
+                                </td>
+
+                                <td className="py-3 px-3">
+                                  <span
+                                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                      p.availabilityStatus === "AVAILABLE"
+                                        ? "bg-emerald-950 text-emerald-300 border border-emerald-500/30"
+                                        : p.availabilityStatus === "LIMITED"
+                                        ? "bg-amber-950 text-amber-300 border border-amber-500/30"
+                                        : p.availabilityStatus === "OUT_OF_STOCK"
+                                        ? "bg-rose-950 text-rose-300 border border-rose-500/30"
+                                        : "bg-blue-950 text-blue-300 border border-blue-500/30"
+                                    }`}
+                                  >
+                                    {p.availabilityStatus === "AVAILABLE"
+                                      ? "متوفر"
+                                      : p.availabilityStatus === "LIMITED"
+                                      ? "كمية محدودة"
+                                      : p.availabilityStatus === "OUT_OF_STOCK"
+                                      ? "غير متوفر"
+                                      : "سيتوفر قريبًا"}
+                                  </span>
+                                </td>
+
+                                <td className="py-3 px-3 text-center">
                                   <button
                                     type="button"
-                                    onClick={() => openEditProduct(p)}
-                                    className="p-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 hover:text-white transition-colors"
-                                    title="تعديل المنتج"
+                                    onClick={() => handleToggleProductActive(p)}
+                                    className={`p-1 rounded-full transition-colors ${
+                                      p.isActive
+                                        ? "text-emerald-400 hover:text-emerald-300"
+                                        : "text-slate-600 hover:text-slate-400"
+                                    }`}
+                                    title={p.isActive ? "مفعل في المتجر (اضغط للإيقاف)" : "معطل (اضغط للتفعيل)"}
                                   >
-                                    <Edit className="w-3.5 h-3.5" />
+                                    {p.isActive ? (
+                                      <CheckCircle2 className="w-5 h-5 fill-emerald-500/20" />
+                                    ) : (
+                                      <XCircle className="w-5 h-5 fill-slate-800" />
+                                    )}
                                   </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleDeleteProduct(p)}
-                                    className="p-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 hover:text-rose-300 transition-colors"
-                                    title="حذف المنتج"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
+                                </td>
+
+                                <td className="py-3 px-3 text-center">
+                                  <div className="flex items-center justify-center gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => openEditProduct(p)}
+                                      className="p-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 hover:text-white transition-colors"
+                                      title="تعديل المنتج"
+                                    >
+                                      <Edit className="w-3.5 h-3.5" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleDeleteProduct(p)}
+                                      className="p-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 hover:text-rose-300 transition-colors"
+                                      title="حذف المنتج"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
@@ -1473,59 +1591,103 @@ export default function StandaloneAdminDashboard() {
                     <div className="text-xs text-slate-500">اضغط على زر «تفعيل عرض على منتج» لإضافة خصم</div>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-right text-xs">
-                      <thead>
-                        <tr className="border-b border-slate-700 text-slate-400 font-bold">
-                          <th className="py-3 px-3">المنتج</th>
-                          <th className="py-3 px-3">القسم</th>
-                          <th className="py-3 px-3">السعر الأصلي</th>
-                          <th className="py-3 px-3">سعر العرض</th>
-                          <th className="py-3 px-3">مقدار الخصم</th>
-                          <th className="py-3 px-3">نسبة الخصم</th>
-                          <th className="py-3 px-3 text-center">إلغاء العرض</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-700/60">
-                        {deals.map((d) => (
-                          <tr key={d.id} className="hover:bg-slate-700/30 transition-colors">
-                            <td className="py-3 px-3">
-                              <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 shrink-0">
-                                  <img src={d.imageUrl} alt={d.name} className="w-full h-full object-cover" />
-                                </div>
-                                <div className="font-bold text-white max-w-[220px] truncate">{d.name}</div>
+                  <>
+                    {/* Mobile Deals Cards */}
+                    <div className="md:hidden space-y-3">
+                      {deals.map((d) => (
+                        <div
+                          key={d.id}
+                          className="p-3.5 rounded-2xl bg-slate-800/60 border border-slate-700/60 space-y-3"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 shrink-0 relative">
+                              <img src={d.imageUrl} alt={d.name} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-black text-sm text-white truncate">{d.name}</div>
+                              <div className="text-[11px] text-slate-400">{d.categoryName}</div>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="font-mono font-black text-emerald-400 text-xs">
+                                  {formatIQD(d.price)}
+                                </span>
+                                <span className="font-mono text-slate-400 line-through text-[10px]">
+                                  {formatIQD(d.originalPrice || d.price)}
+                                </span>
                               </div>
-                            </td>
-                            <td className="py-3 px-3 text-slate-300">{d.categoryName}</td>
-                            <td className="py-3 px-3 font-mono text-slate-400 line-through">
-                              {formatIQD(d.originalPrice || d.price)}
-                            </td>
-                            <td className="py-3 px-3 font-mono font-black text-emerald-300">
-                              {formatIQD(d.price)}
-                            </td>
-                            <td className="py-3 px-3 font-mono font-bold text-amber-300">
-                              {formatIQD(d.discountAmount)}
-                            </td>
-                            <td className="py-3 px-3">
-                              <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold font-mono">
-                                {d.discountPercent}% خصم
-                              </span>
-                            </td>
-                            <td className="py-3 px-3 text-center">
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveDeal(d.id, d.name)}
-                                className="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 text-xs font-bold transition-colors"
-                              >
-                                إلغاء الخصم
-                              </button>
-                            </td>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between pt-2.5 border-t border-slate-700/60 text-xs">
+                            <span className="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold font-mono text-[11px]">
+                              خصم {d.discountPercent}% ({formatIQD(d.discountAmount)})
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveDeal(d.id, d.name)}
+                              className="px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 text-xs font-bold transition-colors"
+                            >
+                              إلغاء الخصم
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Desktop Deals Table */}
+                    <div className="hidden md:block overflow-x-auto">
+                      <table className="w-full text-right text-xs">
+                        <thead>
+                          <tr className="border-b border-slate-700 text-slate-400 font-bold">
+                            <th className="py-3 px-3">المنتج</th>
+                            <th className="py-3 px-3">القسم</th>
+                            <th className="py-3 px-3">السعر الأصلي</th>
+                            <th className="py-3 px-3">سعر العرض</th>
+                            <th className="py-3 px-3">مقدار الخصم</th>
+                            <th className="py-3 px-3">نسبة الخصم</th>
+                            <th className="py-3 px-3 text-center">إلغاء العرض</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody className="divide-y divide-slate-700/60">
+                          {deals.map((d) => (
+                            <tr key={d.id} className="hover:bg-slate-700/30 transition-colors">
+                              <td className="py-3 px-3">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 shrink-0">
+                                    <img src={d.imageUrl} alt={d.name} className="w-full h-full object-cover" />
+                                  </div>
+                                  <div className="font-bold text-white max-w-[220px] truncate">{d.name}</div>
+                                </div>
+                              </td>
+                              <td className="py-3 px-3 text-slate-300">{d.categoryName}</td>
+                              <td className="py-3 px-3 font-mono text-slate-400 line-through">
+                                {formatIQD(d.originalPrice || d.price)}
+                              </td>
+                              <td className="py-3 px-3 font-mono font-black text-emerald-300">
+                                {formatIQD(d.price)}
+                              </td>
+                              <td className="py-3 px-3 font-mono font-bold text-amber-300">
+                                {formatIQD(d.discountAmount)}
+                              </td>
+                              <td className="py-3 px-3">
+                                <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold font-mono">
+                                  {d.discountPercent}% خصم
+                                </span>
+                              </td>
+                              <td className="py-3 px-3 text-center">
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveDeal(d.id, d.name)}
+                                  className="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 text-xs font-bold transition-colors"
+                                >
+                                  إلغاء الخصم
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
@@ -1777,22 +1939,29 @@ export default function StandaloneAdminDashboard() {
           {activeTab === "account" && (
             <div className="space-y-5 animate-in fade-in duration-300 max-w-2xl">
               <div>
-                <h1 className="text-xl font-black text-white">حساب المدير العام 👤</h1>
+                <h1 className="text-xl font-black text-white flex items-center gap-2">
+                  <span>حساب المدير</span>
+                  <span className="text-emerald-400">إبراهيم</span>
+                  <span>👑</span>
+                </h1>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  إدارة بيانات تسجيل الدخول وتغيير كلمة المرور
+                  إدارة بيانات الحساب وتحديث كلمة المرور
                 </p>
               </div>
 
               <div className="p-6 rounded-3xl bg-slate-800/80 border border-slate-700 space-y-4">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-2xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-black text-xl">
-                    {adminUser?.name?.charAt(0) || "M"}
+                    إ
                   </div>
                   <div>
-                    <h3 className="text-base font-black text-white">{adminUser?.name || "المدير العام"}</h3>
+                    <h3 className="text-base font-black text-white flex items-center gap-1.5">
+                      <span>إبراهيم</span>
+                      <span className="text-xs text-amber-400">👑</span>
+                    </h3>
                     <div className="text-xs text-slate-400 font-mono mt-0.5">{adminUser?.email || "admin@store.com"}</div>
-                    <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-md border border-emerald-500/30 mt-1 inline-block">
-                      صلاحية كاملة: {adminUser?.role || "ADMIN"}
+                    <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-500/30 mt-1 inline-block">
+                      صلاحية كاملة: المدير العام (ADMIN)
                     </span>
                   </div>
                 </div>
@@ -2353,6 +2522,38 @@ export default function StandaloneAdminDashboard() {
           </div>
         </div>
       )}
+      {/* Mobile Bottom Navigation Bar (Screens < lg) */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-2xl border-t border-slate-800/80 px-1 py-1.5 flex items-center justify-around shadow-2xl shadow-black">
+        {[
+          { id: "overview", label: "الرئيسية", icon: LayoutDashboard },
+          { id: "products", label: "المنتجات", icon: Package },
+          { id: "categories", label: "الأقسام", icon: FolderTree },
+          { id: "deals", label: "العروض", icon: Flame },
+          { id: "banners", label: "البانرات", icon: ImageIcon },
+          { id: "settings", label: "الإعدادات", icon: Settings },
+          { id: "account", label: "إبراهيم", icon: User },
+        ].map((item) => {
+          const Icon = item.icon;
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setActiveTab(item.id as AdminTab)}
+              className={`flex flex-col items-center gap-0.5 py-1 px-2 rounded-xl transition-all ${
+                isActive
+                  ? "text-emerald-400 font-black scale-105"
+                  : "text-slate-400 hover:text-slate-200 font-medium"
+              }`}
+            >
+              <div className={`p-1.5 rounded-xl transition-colors ${isActive ? "bg-emerald-500/20 text-emerald-400" : ""}`}>
+                <Icon className="w-4 h-4" />
+              </div>
+              <span className="text-[10px] leading-tight">{item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
     </div>
   );
 }
