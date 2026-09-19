@@ -14,10 +14,8 @@ export function getApiBaseUrl(): string {
   if (envUrl && envUrl.trim()) {
     return envUrl.trim().replace(/\/$/, "");
   }
-  if (typeof window !== "undefined") {
-    return window.location.origin;
-  }
-  return "http://localhost:3000";
+  // Default to live deployed backend store
+  return "https://app55.vercel.app";
 }
 
 export function setCustomApiUrl(url: string) {
@@ -34,9 +32,7 @@ export function setCustomApiUrl(url: string) {
   }
 }
 
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  (typeof window !== "undefined" ? window.location.origin : "http://localhost:3000");
+export const API_BASE_URL = "https://app55.vercel.app";
 
 const TOKEN_KEY = "sama_admin_token";
 
