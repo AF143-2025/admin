@@ -52,13 +52,15 @@ function LoginForm() {
 
   const handleTestConnection = async () => {
     const targetUrl = apiUrl.trim() || getApiBaseUrl();
+    const cleanBase = targetUrl ? targetUrl.replace(/\/$/, "") : "";
+    const testEndpoint = `${cleanBase}/api/products`;
     setTestingConnection(true);
     setConnectionStatus("idle");
     setConnectionMessage(null);
 
     try {
       // Ping products or health endpoint
-      const res = await fetch(`${targetUrl}/api/products`, {
+      const res = await fetch(testEndpoint, {
         method: "GET",
         headers: { Accept: "application/json" },
       });
@@ -74,7 +76,7 @@ function LoginForm() {
     } catch (err: any) {
       setConnectionStatus("error");
       setConnectionMessage(
-        `تعذر الاتصال بالسيرفر (${targetUrl}). تأكد من أن السيرفر يعمل وأن الرابط صحيح ويبدأ بـ https://`
+        `تعذر الاتصال بالسيرفر (${targetUrl || "المتجر الافتراضي"}). تأكد من أن السيرفر يعمل وأن الرابط صحيح.`
       );
     } finally {
       setTestingConnection(false);
@@ -92,10 +94,12 @@ function LoginForm() {
     }
 
     const currentBaseUrl = apiUrl.trim() || getApiBaseUrl();
+    const cleanBase = currentBaseUrl ? currentBaseUrl.replace(/\/$/, "") : "";
+    const loginEndpoint = `${cleanBase}/api/admin/auth/login`;
 
     try {
       setLoading(true);
-      const res = await fetch(`${currentBaseUrl}/api/admin/auth/login`, {
+      const res = await fetch(loginEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim(), password }),

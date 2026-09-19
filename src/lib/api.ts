@@ -14,8 +14,8 @@ export function getApiBaseUrl(): string {
   if (envUrl && envUrl.trim()) {
     return envUrl.trim().replace(/\/$/, "");
   }
-  // Default to live deployed backend store
-  return "https://app55.vercel.app";
+  // Default to empty string so Next.js rewrites proxy seamlessly to https://app55.vercel.app with zero CORS issues
+  return "";
 }
 
 export function setCustomApiUrl(url: string) {
@@ -32,7 +32,7 @@ export function setCustomApiUrl(url: string) {
   }
 }
 
-export const API_BASE_URL = "https://app55.vercel.app";
+export const API_BASE_URL = "";
 
 const TOKEN_KEY = "sama_admin_token";
 
@@ -58,9 +58,8 @@ export async function adminApiFetch(endpoint: string, options: RequestInit = {})
   const token = getAdminToken();
   const baseUrl = getApiBaseUrl();
 
-  const url = endpoint.startsWith("http")
-    ? endpoint
-    : `${baseUrl}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url = baseUrl ? `${baseUrl}${cleanEndpoint}` : cleanEndpoint;
 
   const headers: Record<string, string> = {
     ...(options.headers as Record<string, string>),
